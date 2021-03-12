@@ -28,7 +28,7 @@ namespace RedditVideoGenerator.Tools
             client = new Reddit(GetToken("309124630807-kvLMu76XzXQ5lcpvyUbXfy2SFbY"));
             timeSinceInitialization = DateTime.Now;
 
-            //Console.WriteLine(JsonConvert.SerializeObject(GetPost("memes", FromTime.Day, 15, 20)));
+            //Console.WriteLine(JsonConvert.SerializeObject(GetPost("memes", FromTime.Day, 15, 20, "https://www.reddit.com/r/AskMen/comments/m2u2dc/what_did_you_not_know_or_realize_until_after/")));
 
             InitState = InitializationState.INITIALIZED;
             Console.WriteLine("Reddit tools initialized.");
@@ -58,7 +58,7 @@ namespace RedditVideoGenerator.Tools
         {
             //new Random().Next(0,30)
             var post = postID != null ? client.GetPost(new Uri(postID)) : client.GetSubreddit(sub).GetTop(timePeriod).Where(p => !p.NSFW && !p.Url.ToString().Contains("v.redd.it")).Take(postDepth).ToArray()[new Random().Next(0, postDepth)];
-            var postObject = new RedditPost(post.Title, sub, post.Url.ToString().Contains("reddit.com") ? post.SelfText : post.Url.ToString(), post.AuthorName, post.Score);
+            var postObject = new RedditPost(post.Title, post.Url.ToString().Contains("reddit.com") ? post.SelfText : post.Url.ToString(), post.AuthorName, post.Score);
 
             postObject.comments = new RedditComment[commentCount];
             var comments = post.Comments.Take(commentCount).ToArray();
