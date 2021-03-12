@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RedditVideoGenerator.Tools;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,9 +14,11 @@ namespace RedditVideoGenerator
         [STAThread]
         static void Main()
         {
+            RedditTools.Initialize();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new DebugForm());
-        }
+        } 
     }
 }
