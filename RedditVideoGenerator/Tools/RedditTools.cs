@@ -64,6 +64,7 @@ namespace RedditVideoGenerator.Tools
             var comments = post.Comments.Take(commentCount).ToArray();
             for (int i=0;i<commentCount;i++)
             {
+                if (i == comments.Length) break;
                 postObject.comments[i] = new RedditComment(comments[i].Body, comments[i].AuthorName, comments[i].Score);
             }
 

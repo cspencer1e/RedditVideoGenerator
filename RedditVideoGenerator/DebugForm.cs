@@ -24,7 +24,7 @@ namespace RedditVideoGenerator
 
         private void button1_Click(object sender, EventArgs e)
         {
-            post = RedditTools.GetPost("AskReddit", FromTime.Day, 10, 10);
+            post = RedditTools.GetPost("Art", FromTime.Week, 10, 30);
             pictureBox1.Image = ImageTools.PostImage(post);
             comment = -1;
             //pictureBox1.Image = ImageTools.CommentImage("According to my wife I cannot open the living room curtains properly and she always need to redo it", "chillipotpeeps", ImageTools.FormatScore(3481));
