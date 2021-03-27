@@ -27,6 +27,9 @@ namespace RedditVideoGenerator.Controls
         Brush backBrush;
         Brush frontBrush;
 
+        public string StatusMessage { get; set; }
+        public Font StatusFont { get; set; }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             if (backBrush==null)
@@ -41,7 +44,17 @@ namespace RedditVideoGenerator.Controls
             if (ProgressBarRenderer.IsSupported)
                 ProgressBarRenderer.DrawHorizontalBar(e.Graphics, e.ClipRectangle);
             e.Graphics.FillRectangle(backBrush, 0, 0, e.ClipRectangle.Width, e.ClipRectangle.Height);
+            
+            e.Graphics.DrawString(StatusMessage, StatusFont, frontBrush, 4f, 4f);
+
             e.Graphics.FillRectangle(frontBrush, 4, 4, rec.Width-8, rec.Height-8);
+
+            e.Graphics.SetClip(new Rectangle(4, 4, rec.Width - 8, rec.Height - 8));
+            e.Graphics.DrawString(StatusMessage, StatusFont, backBrush, new Rectangle(4, 4, rec.Width-8, rec.Height-8), new StringFormat()
+            {
+                FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap,
+                Trimming = StringTrimming.None
+            });
         }
     }
 }

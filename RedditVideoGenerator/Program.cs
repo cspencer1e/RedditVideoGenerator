@@ -8,6 +8,8 @@ namespace RedditVideoGenerator
 {
     static class Program
     {
+        public static MainForm form;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -18,7 +20,9 @@ namespace RedditVideoGenerator
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+
+            form = new MainForm();
+            Application.Run(form);
         } 
     }
 }

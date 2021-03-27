@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 using RedditSharp;
 using RedditSharp.Things;
@@ -54,21 +57,50 @@ namespace RedditVideoGenerator.Tools
             return ((dynamic)JsonConvert.DeserializeObject(restResponse.Content)).access_token;
         }
 
-        public static RedditPost GetPost(string sub, FromTime timePeriod, int commentCount, int postDepth, string postID = null)
+        //IProgress<int> barProgress, IProgress<string> statusProgress, 
+        public static RedditPost GetPost(string sub, FromTime timePeriod, int commentCount, int postDepth, string postID = null, float multi = 1f, float barStartPos = 0f)
         {
-            //new Random().Next(0,30)
-            var post = postID != null ? client.GetPost(new Uri(postID)) : client.GetSubreddit(sub).GetTop(timePeriod).Where(p => !p.NSFW && !p.Url.ToString().Contains("v.redd.it")).Take(postDepth).ToArray()[new Random().Next(0, postDepth)];
-            var postObject = new RedditPost(post.Title, post.Url.ToString().Contains("reddit.com") ? post.SelfText : post.Url.ToString(), post.AuthorName, post.Score);
-
-            postObject.comments = new RedditComment[commentCount];
-            var comments = post.Comments.Take(commentCount).ToArray();
-            for (int i=0;i<commentCount;i++)
+            try
             {
-                if (i == comments.Length) break;
-                postObject.comments[i] = new RedditComment(comments[i].Body, comments[i].AuthorName, comments[i].Score);
-            }
+                Program.form.targetBarValue = barStartPos + 1f;
+                Program.form.statusText = "Selecting post...";
 
-            return postObject;
+                Post post = null;
+                if (!string.IsNullOrWhiteSpace(postID))
+                {
+                    post = client.GetPost(new Uri(postID));
+                }
+                if (post == null)
+                {
+                    post = client.GetSubreddit(sub).GetTop(timePeriod).Where(p => !p.NSFW && !p.Url.ToString().Contains("v.redd.it")).Take(postDepth).ToArray()[new Random().Next(0, postDepth)];
+                }
+
+                Program.form.targetBarValue = barStartPos + 80f * multi;
+                Program.form.statusText = "Selecting comments...";
+
+                var postObject = new RedditPost(post.Title, post.Url.ToString().Contains("reddit.com") ? post.SelfText : post.Url.ToString(), post.AuthorName, post.Score);
+
+                var comments = post.Comments.Take(commentCount).ToArray();
+
+                var commentAmount = commentCount;
+                if (commentAmount > comments.Length) commentAmount = comments.Length;
+
+                postObject.comments = new RedditComment[commentAmount];
+                for (int i = 0; i < commentAmount; i++)
+                {
+                    postObject.comments[i] = new RedditComment(comments[i].Body, comments[i].AuthorName, comments[i].Score);
+                }
+                
+                Program.form.targetBarValue = barStartPos + 100f * multi;
+                Program.form.statusText = "";
+
+                return postObject;
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine("AAAAAAA"+e);
+                return null;
+            }
         }
     }
 }

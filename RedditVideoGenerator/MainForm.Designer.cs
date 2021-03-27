@@ -43,12 +43,12 @@
             this.logoBox = new System.Windows.Forms.PictureBox();
             this.mainPanel = new System.Windows.Forms.Panel();
             this.postOptionsPanel = new System.Windows.Forms.Panel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.selectedPostPanel = new System.Windows.Forms.Panel();
+            this.clearButton = new System.Windows.Forms.Button();
+            this.selectPostButton = new System.Windows.Forms.Button();
+            this.commentsText = new System.Windows.Forms.Label();
+            this.helpIcon6 = new System.Windows.Forms.PictureBox();
+            this.selectedPostText = new System.Windows.Forms.Label();
             this.postUrlPanel = new System.Windows.Forms.Panel();
             this.helpIcon5 = new System.Windows.Forms.PictureBox();
             this.postUrlBox = new System.Windows.Forms.TextBox();
@@ -75,7 +75,7 @@
             this.postDepthBox = new RedditVideoGenerator.Controls.FlatNumericUpDown();
             this.commentAmountBox = new RedditVideoGenerator.Controls.FlatNumericUpDown();
             this.postDateBox = new RedditVideoGenerator.Controls.FlatComboBox();
-            this.flatProgressBar1 = new RedditVideoGenerator.Controls.FlatProgressBar();
+            this.progressBar = new RedditVideoGenerator.Controls.FlatProgressBar();
             this.progressBarPanel.SuspendLayout();
             this.sidePanel.SuspendLayout();
             this.tabPanel.SuspendLayout();
@@ -86,8 +86,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.logoBox)).BeginInit();
             this.mainPanel.SuspendLayout();
             this.postOptionsPanel.SuspendLayout();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.selectedPostPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.helpIcon6)).BeginInit();
             this.postUrlPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.helpIcon5)).BeginInit();
             this.postDepthPanel.SuspendLayout();
@@ -107,7 +107,7 @@
             // 
             this.progressBarPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(32)))), ((int)(((byte)(71)))));
             this.progressBarPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.progressBarPanel.Controls.Add(this.flatProgressBar1);
+            this.progressBarPanel.Controls.Add(this.progressBar);
             this.progressBarPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.progressBarPanel.Location = new System.Drawing.Point(0, 414);
             this.progressBarPanel.Name = "progressBarPanel";
@@ -124,7 +124,6 @@
             this.sidePanel.Name = "sidePanel";
             this.sidePanel.Size = new System.Drawing.Size(200, 414);
             this.sidePanel.TabIndex = 0;
-            this.sidePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.sidePanel_Paint);
             // 
             // tabPanel
             // 
@@ -257,7 +256,7 @@
             // postOptionsPanel
             // 
             this.postOptionsPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(32)))), ((int)(((byte)(71)))));
-            this.postOptionsPanel.Controls.Add(this.panel1);
+            this.postOptionsPanel.Controls.Add(this.selectedPostPanel);
             this.postOptionsPanel.Controls.Add(this.postUrlPanel);
             this.postOptionsPanel.Controls.Add(this.postDepthPanel);
             this.postOptionsPanel.Controls.Add(this.commentAmountPanel);
@@ -268,84 +267,84 @@
             this.postOptionsPanel.Size = new System.Drawing.Size(510, 370);
             this.postOptionsPanel.TabIndex = 0;
             // 
-            // panel1
+            // selectedPostPanel
             // 
-            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(40)))), ((int)(((byte)(102)))));
-            this.panel1.Controls.Add(this.button2);
-            this.panel1.Controls.Add(this.button1);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.pictureBox1);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Location = new System.Drawing.Point(6, 238);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(498, 125);
-            this.panel1.TabIndex = 5;
+            this.selectedPostPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(40)))), ((int)(((byte)(102)))));
+            this.selectedPostPanel.Controls.Add(this.clearButton);
+            this.selectedPostPanel.Controls.Add(this.selectPostButton);
+            this.selectedPostPanel.Controls.Add(this.commentsText);
+            this.selectedPostPanel.Controls.Add(this.helpIcon6);
+            this.selectedPostPanel.Controls.Add(this.selectedPostText);
+            this.selectedPostPanel.Location = new System.Drawing.Point(6, 238);
+            this.selectedPostPanel.Name = "selectedPostPanel";
+            this.selectedPostPanel.Size = new System.Drawing.Size(498, 125);
+            this.selectedPostPanel.TabIndex = 5;
             // 
-            // button2
+            // clearButton
             // 
-            this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(90)))), ((int)(((byte)(165)))));
-            this.button2.FlatAppearance.BorderSize = 0;
-            this.button2.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(87)))), ((int)(((byte)(187)))), ((int)(((byte)(249)))));
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Font = new System.Drawing.Font("Harmonia Sans Pro Cyr", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(158)))), ((int)(((byte)(239)))), ((int)(((byte)(247)))));
-            this.button2.Location = new System.Drawing.Point(402, 83);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(89, 35);
-            this.button2.TabIndex = 10;
-            this.button2.Text = "Clear";
-            this.button2.UseVisualStyleBackColor = false;
+            this.clearButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(90)))), ((int)(((byte)(165)))));
+            this.clearButton.FlatAppearance.BorderSize = 0;
+            this.clearButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(87)))), ((int)(((byte)(187)))), ((int)(((byte)(249)))));
+            this.clearButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.clearButton.Font = new System.Drawing.Font("Harmonia Sans Pro Cyr", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.clearButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(158)))), ((int)(((byte)(239)))), ((int)(((byte)(247)))));
+            this.clearButton.Location = new System.Drawing.Point(402, 83);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(89, 35);
+            this.clearButton.TabIndex = 10;
+            this.clearButton.Text = "Clear";
+            this.clearButton.UseVisualStyleBackColor = false;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
-            // button1
+            // selectPostButton
             // 
-            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(90)))), ((int)(((byte)(165)))));
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(87)))), ((int)(((byte)(187)))), ((int)(((byte)(249)))));
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("Harmonia Sans Pro Cyr", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(158)))), ((int)(((byte)(239)))), ((int)(((byte)(247)))));
-            this.button1.Location = new System.Drawing.Point(8, 83);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(388, 35);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "Select Post";
-            this.button1.UseVisualStyleBackColor = false;
+            this.selectPostButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(90)))), ((int)(((byte)(165)))));
+            this.selectPostButton.FlatAppearance.BorderSize = 0;
+            this.selectPostButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(87)))), ((int)(((byte)(187)))), ((int)(((byte)(249)))));
+            this.selectPostButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.selectPostButton.Font = new System.Drawing.Font("Harmonia Sans Pro Cyr", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.selectPostButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(158)))), ((int)(((byte)(239)))), ((int)(((byte)(247)))));
+            this.selectPostButton.Location = new System.Drawing.Point(8, 83);
+            this.selectPostButton.Name = "selectPostButton";
+            this.selectPostButton.Size = new System.Drawing.Size(388, 35);
+            this.selectPostButton.TabIndex = 9;
+            this.selectPostButton.Text = "Select Post";
+            this.selectPostButton.UseVisualStyleBackColor = false;
+            this.selectPostButton.Click += new System.EventHandler(this.selectPostButton_Click);
             // 
-            // label2
+            // commentsText
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Harmonia Sans Pro Cyr", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(90)))), ((int)(((byte)(165)))));
-            this.label2.Location = new System.Drawing.Point(3, 30);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(134, 19);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "Comments: None";
+            this.commentsText.AutoSize = true;
+            this.commentsText.Font = new System.Drawing.Font("Harmonia Sans Pro Cyr", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.commentsText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(90)))), ((int)(((byte)(165)))));
+            this.commentsText.Location = new System.Drawing.Point(3, 30);
+            this.commentsText.Name = "commentsText";
+            this.commentsText.Size = new System.Drawing.Size(134, 19);
+            this.commentsText.TabIndex = 8;
+            this.commentsText.Text = "Comments: None";
             // 
-            // pictureBox1
+            // helpIcon6
             // 
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(471, 8);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(20, 20);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 7;
-            this.pictureBox1.TabStop = false;
-            this.helpTooltip.SetToolTip(this.pictureBox1, resources.GetString("pictureBox1.ToolTip"));
+            this.helpIcon6.Image = ((System.Drawing.Image)(resources.GetObject("helpIcon6.Image")));
+            this.helpIcon6.Location = new System.Drawing.Point(471, 8);
+            this.helpIcon6.Name = "helpIcon6";
+            this.helpIcon6.Size = new System.Drawing.Size(20, 20);
+            this.helpIcon6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.helpIcon6.TabIndex = 7;
+            this.helpIcon6.TabStop = false;
+            this.helpTooltip.SetToolTip(this.helpIcon6, resources.GetString("helpIcon6.ToolTip"));
             // 
-            // label1
+            // selectedPostText
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Harmonia Sans Pro Cyr", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(87)))), ((int)(((byte)(187)))), ((int)(((byte)(249)))));
-            this.label1.Location = new System.Drawing.Point(3, 5);
-            this.label1.MaximumSize = new System.Drawing.Size(462, 52);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(195, 25);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Selected Post: None";
-            this.helpTooltip.SetToolTip(this.label1, "If you were in a room with everyone you ever met, who would be the one you’d look" +
-        " for?");
+            this.selectedPostText.AutoSize = true;
+            this.selectedPostText.Font = new System.Drawing.Font("Harmonia Sans Pro Cyr", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.selectedPostText.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(87)))), ((int)(((byte)(187)))), ((int)(((byte)(249)))));
+            this.selectedPostText.Location = new System.Drawing.Point(3, 5);
+            this.selectedPostText.MaximumSize = new System.Drawing.Size(462, 52);
+            this.selectedPostText.Name = "selectedPostText";
+            this.selectedPostText.Size = new System.Drawing.Size(195, 25);
+            this.selectedPostText.TabIndex = 0;
+            this.selectedPostText.Text = "Selected Post: None";
             // 
             // postUrlPanel
             // 
@@ -671,16 +670,20 @@
             this.postDateBox.Size = new System.Drawing.Size(241, 35);
             this.postDateBox.TabIndex = 5;
             // 
-            // flatProgressBar1
+            // progressBar
             // 
-            this.flatProgressBar1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(40)))), ((int)(((byte)(102)))));
-            this.flatProgressBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flatProgressBar1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(87)))), ((int)(((byte)(187)))), ((int)(((byte)(249)))));
-            this.flatProgressBar1.Location = new System.Drawing.Point(0, 0);
-            this.flatProgressBar1.Name = "flatProgressBar1";
-            this.flatProgressBar1.Size = new System.Drawing.Size(722, 36);
-            this.flatProgressBar1.TabIndex = 0;
-            this.flatProgressBar1.Value = 10;
+            this.progressBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(40)))), ((int)(((byte)(102)))));
+            this.progressBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.progressBar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(87)))), ((int)(((byte)(187)))), ((int)(((byte)(249)))));
+            this.progressBar.Location = new System.Drawing.Point(0, 0);
+            this.progressBar.Maximum = 100000;
+            this.progressBar.Minimum = 1;
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(722, 36);
+            this.progressBar.StatusFont = new System.Drawing.Font("Harmonia Sans Pro Cyr", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.progressBar.StatusMessage = "";
+            this.progressBar.TabIndex = 0;
+            this.progressBar.Value = 100000;
             // 
             // MainForm
             // 
@@ -697,8 +700,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Reddit Video Generator";
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseDown);
             this.progressBarPanel.ResumeLayout(false);
             this.sidePanel.ResumeLayout(false);
             this.tabPanel.ResumeLayout(false);
@@ -709,9 +710,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.logoBox)).EndInit();
             this.mainPanel.ResumeLayout(false);
             this.postOptionsPanel.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.selectedPostPanel.ResumeLayout(false);
+            this.selectedPostPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.helpIcon6)).EndInit();
             this.postUrlPanel.ResumeLayout(false);
             this.postUrlPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.helpIcon5)).EndInit();
@@ -772,14 +773,14 @@
         private System.Windows.Forms.PictureBox helpIcon2;
         private System.Windows.Forms.PictureBox helpIcon4;
         private System.Windows.Forms.PictureBox helpIcon5;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Panel selectedPostPanel;
+        private System.Windows.Forms.PictureBox helpIcon6;
+        private System.Windows.Forms.Label selectedPostText;
+        private System.Windows.Forms.Label commentsText;
+        private System.Windows.Forms.Button selectPostButton;
+        private System.Windows.Forms.Button clearButton;
         private Controls.FlatComboBox postDateBox;
-        private Controls.FlatProgressBar flatProgressBar1;
+        private Controls.FlatProgressBar progressBar;
         private Controls.FlatNumericUpDown commentAmountBox;
         private Controls.FlatNumericUpDown postDepthBox;
     }
