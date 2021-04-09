@@ -52,6 +52,8 @@ namespace RedditVideoGenerator
             selectedPanel = postOptionsPanel;
 
             postDateBox.SelectedIndex = 3;
+
+            ttsVoiceBox.Items.AddRange(TTSTools.Speech.GetInstalledVoices().Select(voice => voice.VoiceInfo.Name).ToArray());
         }
 
         protected override void CreateHandle()
@@ -181,6 +183,22 @@ namespace RedditVideoGenerator
         void ChangeOptionsEnabled(bool enabled)
         {
             postOptionsPanel.Enabled = enabled;
+        }
+
+        private void backgroundVideoSelector_Click(object sender, EventArgs e)
+        {
+            if (backgroundVideoDialog.ShowDialog() == DialogResult.OK)
+            {
+                backgroundVideoBox.Text = backgroundVideoDialog.FileName;
+            }
+        }
+
+        private void videoOutputSelector_Click(object sender, EventArgs e)
+        {
+            if (videoOutputDialog.ShowDialog() == DialogResult.OK)
+            {
+                videoOutputBox.Text = videoOutputDialog.FileName;
+            }
         }
     }
 }

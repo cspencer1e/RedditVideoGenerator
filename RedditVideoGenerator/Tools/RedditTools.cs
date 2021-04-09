@@ -74,6 +74,7 @@ namespace RedditVideoGenerator.Tools
                 {
                     post = client.GetSubreddit(sub).GetTop(timePeriod).Where(p => !p.NSFW && !p.Url.ToString().Contains("v.redd.it")).Take(postDepth).ToArray()[new Random().Next(0, postDepth)];
                 }
+                Debug.WriteLine("WE NULL THO? " + (post == null));
 
                 Program.form.targetBarValue = barStartPos + 80f * multi;
                 Program.form.statusText = "Selecting comments...";

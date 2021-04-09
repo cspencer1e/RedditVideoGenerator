@@ -16,14 +16,14 @@ namespace RedditVideoGenerator.Controls
                 ControlStyles.UserPaint |
                 ControlStyles.AllPaintingInWmPaint, true);
         }
-
+        /*
         protected override void Dispose(bool disposing)
         {
             backBrush.Dispose();
             frontBrush.Dispose();
             base.Dispose(disposing);
         }
-
+        */
         Brush backBrush;
         Brush frontBrush;
 

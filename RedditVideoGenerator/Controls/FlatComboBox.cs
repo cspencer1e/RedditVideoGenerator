@@ -92,7 +92,7 @@ namespace RedditVideoGenerator.Controls
                 brush2 = DropButtonBrush;
             }
             e.Graphics.FillRectangle(brush2, e.Bounds);
-            e.Graphics.DrawString(Items[index].ToString(), e.Font, brush, e.Bounds, StringFormat.GenericDefault);
+            if (index < Items.Count) e.Graphics.DrawString(Items[index].ToString(), e.Font, brush, e.Bounds, StringFormat.GenericDefault);
         }
     }
 }
