@@ -15,14 +15,30 @@ namespace RedditVideoGenerator.Tools
     {
         public static float scale = 1.334375f;
 
-        public static void GeneratePostImages(RedditPost post)
+        public static void GeneratePostImages(RedditPost post, float multi = 1f, float barStartPos = 0f)
         {
             VideoTools.SetupTempFolders();
+
+            Program.form.targetBarValue = barStartPos;
+            Program.form.statusText = "Generating post image...";
+            Program.form.Log($"Beginning image generation...");
+            Program.form.Log($"Generating post image...");
+
             PostImage(post).Save(Path.Combine(VideoTools.imgFolderPath, "0.png"));
+
+            float inc = 100f / post.comments.Length;
             for (int i = 1; i <= post.comments.Length; i++)
             {
+                Program.form.targetBarValue = barStartPos + (inc * i) * multi;
+                Program.form.statusText = $"Generating comment image {i}...";
+                Program.form.Log($"Generating comment image {i}...");
+
                 CommentImage(post.comments[i - 1]).Save(Path.Combine(VideoTools.imgFolderPath, i+".png"));
             }
+
+            Program.form.targetBarValue = barStartPos + 100f * multi;
+            Program.form.statusText = "";
+            Program.form.Log($"Successfully finished image generation with {post.comments.Length} comment images generated.");
         }
 
         public static Bitmap PostImage(RedditPost post)

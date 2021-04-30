@@ -60,48 +60,43 @@ namespace RedditVideoGenerator.Tools
         //IProgress<int> barProgress, IProgress<string> statusProgress, 
         public static RedditPost GetPost(string sub, FromTime timePeriod, int commentCount, int postDepth, string postID = null, float multi = 1f, float barStartPos = 0f)
         {
-            try
+            Program.form.targetBarValue = barStartPos;
+            Program.form.statusText = "Selecting post...";
+            Program.form.Log($"Selecting post with the following settings: {sub}, {timePeriod}, {commentCount} comments, {postDepth} post depth, specific post? {postID!=null}");
+
+            Post post = null;
+            if (!string.IsNullOrWhiteSpace(postID))
             {
-                Program.form.targetBarValue = barStartPos + 1f;
-                Program.form.statusText = "Selecting post...";
+                post = client.GetPost(new Uri(postID));
+            }
+            if (post == null)
+            {
+                post = client.GetSubreddit(sub).GetTop(timePeriod).Where(p => !p.NSFW && !p.Url.ToString().Contains("v.redd.it")).Take(postDepth).ToArray()[new Random().Next(0, postDepth)];
+            }
 
-                Post post = null;
-                if (!string.IsNullOrWhiteSpace(postID))
-                {
-                    post = client.GetPost(new Uri(postID));
-                }
-                if (post == null)
-                {
-                    post = client.GetSubreddit(sub).GetTop(timePeriod).Where(p => !p.NSFW && !p.Url.ToString().Contains("v.redd.it")).Take(postDepth).ToArray()[new Random().Next(0, postDepth)];
-                }
-                Debug.WriteLine("WE NULL THO? " + (post == null));
+            var postObject = new RedditPost(post.Title, post.Url.ToString().Contains("reddit.com") ? post.SelfText : post.Url.ToString(), post.AuthorName, post.Score);
 
-                Program.form.targetBarValue = barStartPos + 80f * multi;
-                Program.form.statusText = "Selecting comments...";
+            Program.form.targetBarValue = barStartPos + 80f * multi;
+            Program.form.statusText = "Selecting comments...";
+            Program.form.Log($"Successfully selected post {postObject.title} by {postObject.author}.");
+            Program.form.Log($"Attempting to select {commentCount} comments...");
 
-                var postObject = new RedditPost(post.Title, post.Url.ToString().Contains("reddit.com") ? post.SelfText : post.Url.ToString(), post.AuthorName, post.Score);
+            var comments = post.Comments.Take(commentCount).ToArray();
 
-                var comments = post.Comments.Take(commentCount).ToArray();
+            var commentAmount = commentCount;
+            if (commentAmount > comments.Length) commentAmount = comments.Length;
 
-                var commentAmount = commentCount;
-                if (commentAmount > comments.Length) commentAmount = comments.Length;
-
-                postObject.comments = new RedditComment[commentAmount];
-                for (int i = 0; i < commentAmount; i++)
-                {
-                    postObject.comments[i] = new RedditComment(comments[i].Body, comments[i].AuthorName, comments[i].Score);
-                }
+            postObject.comments = new RedditComment[commentAmount];
+            for (int i = 0; i < commentAmount; i++)
+            {
+                postObject.comments[i] = new RedditComment(comments[i].Body, comments[i].AuthorName, comments[i].Score);
+            }
                 
-                Program.form.targetBarValue = barStartPos + 100f * multi;
-                Program.form.statusText = "";
+            Program.form.targetBarValue = barStartPos + 100f * multi;
+            Program.form.statusText = "";
+            Program.form.Log($"Successfully selected {commentAmount} comments.");
 
-                return postObject;
-            }
-            catch(Exception e)
-            {
-                Debug.WriteLine("AAAAAAA"+e);
-                return null;
-            }
+            return postObject;
         }
     }
 }

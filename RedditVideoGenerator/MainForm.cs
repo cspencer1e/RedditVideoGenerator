@@ -7,6 +7,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -44,6 +46,9 @@ namespace RedditVideoGenerator
         public string statusText;
         float realBarValue = 100f;
 
+        string consoleText;
+        bool exceptionLogged;
+
         public MainForm()
         {
             InitializeComponent();
@@ -54,6 +59,20 @@ namespace RedditVideoGenerator
             postDateBox.SelectedIndex = 3;
 
             ttsVoiceBox.Items.AddRange(TTSTools.Speech.GetInstalledVoices().Select(voice => voice.VoiceInfo.Name).ToArray());
+            ttsVoiceBox.SelectedIndex = 0;
+
+            speedBox.SelectedIndex = 1;
+        }
+
+        public void Log(object message)
+        {
+            consoleText += $"[{DateTime.Now.ToString("T", CultureInfo.CreateSpecificCulture("en-us"))}] {message}\r\n";
+        }
+
+        public void LogException(object message)
+        {
+            consoleText += $"\r\n[{DateTime.Now.ToString("T", CultureInfo.CreateSpecificCulture("en-us"))}] An exception occurred! Please create an issue at https://github.com/cspencer1e/RedditVideoGenerator/issues with the below error message.\r\n\r\n{message}\r\n\r\n";
+            exceptionLogged = true;
         }
 
         protected override void CreateHandle()
@@ -71,6 +90,18 @@ namespace RedditVideoGenerator
                 progressBar.StatusMessage = statusText;
                 realBarValue += (targetBarValue - realBarValue) * 0.09f;
                 progressBar.Value = (int)(realBarValue*1000f);
+
+                if (!string.IsNullOrEmpty(consoleText))
+                {
+                    consoleBox.AppendText(consoleText);
+                    consoleText = "";
+                }
+                if (exceptionLogged)
+                {
+                    SwitchTab(generationButton, generationPanel);
+                    exceptionLogged = false;
+                }
+
                 await Task.Delay(1);
             }
         }
@@ -138,51 +169,69 @@ namespace RedditVideoGenerator
             });
         }
 
-        void UpdatePostBox(RedditPost newPost = null)
+        async Task SelectNewPost(bool clearPost = false, float multi = 1f)
         {
-            selectedPost = newPost;
+            if (clearPost == true)
+            {
+                selectedPost = null;
+            }
+            else
+            {
+                var sub = subredditBox.Text;
+                var fromTime = postDateBox.Items[postDateBox.SelectedIndex].ToString();
+                var commentAmt = (int)commentAmountBox.Value;
+                var postDepth = (int)postDepthBox.Value;
+                var postUrl = postUrlBox.Text;
+
+                selectedPost = await Task.Run(() =>
+                {
+                    try
+                    {
+                        return RedditTools.GetPost(sub, (FromTime)Enum.Parse(typeof(FromTime), fromTime), commentAmt, postDepth, postUrl, multi, 1f);
+                    }
+                    catch (Exception ex)
+                    {
+                        Program.form.LogException(ex);
+                        return null;
+                    }
+                });
+            }
 
             var title = "None";
             var comments = "None";
 
-            if (newPost!=null)
+            if (selectedPost != null)
             {
-                title = newPost.title;
-                comments = newPost.comments.Length.ToString();
+                title = selectedPost.title;
+                comments = selectedPost.comments.Length.ToString();
             }
 
             selectedPostText.Text = "Selected Post: " + title;
             commentsText.Text = "Comments: " + comments;
 
             helpTooltip.SetToolTip(selectedPostText, title == "None" ? "" : title);
-            helpTooltip.SetToolTip(commentsText, comments == "None" ? "" : string.Join("\n", newPost.comments.Select(c => c.content)));
+            helpTooltip.SetToolTip(commentsText, comments == "None" ? "" : string.Join("\n", selectedPost.comments.Select(c => c.content)));
 
             commentsText.Location = new Point(commentsText.Location.X, selectedPostText.Location.Y + selectedPostText.Size.Height);
         }
 
         private async void selectPostButton_Click(object sender, EventArgs e)
         {
-            var sub = subredditBox.Text;
-            var fromTime = postDateBox.Items[postDateBox.SelectedIndex].ToString();
-            var commentAmt = (int)commentAmountBox.Value;
-            var postDepth = (int)postDepthBox.Value;
-            var postUrl = postUrlBox.Text;
-
-            //backgroundWorker1.RunWorkerAsync(new object[]{ sub, fromTime, commentAmt, postDepth, postUrl });
             ChangeOptionsEnabled(false);
-            var post = await Task.Run(() => RedditTools.GetPost(sub, (FromTime)Enum.Parse(typeof(FromTime), fromTime), commentAmt, postDepth, postUrl));
+            await SelectNewPost();
             ChangeOptionsEnabled(true);
-            UpdatePostBox(post);
         }
 
-        private void clearButton_Click(object sender, EventArgs e)
+        private async void clearButton_Click(object sender, EventArgs e)
         {
-            UpdatePostBox(null);
+            await SelectNewPost(true);
         }
 
         void ChangeOptionsEnabled(bool enabled)
         {
             postOptionsPanel.Enabled = enabled;
+            videoOptionsPanel.Enabled = enabled;
+            generateVideoButton.Enabled = enabled;
         }
 
         private void backgroundVideoSelector_Click(object sender, EventArgs e)
@@ -199,6 +248,76 @@ namespace RedditVideoGenerator
             {
                 videoOutputBox.Text = videoOutputDialog.FileName;
             }
+        }
+
+        private async void generateVideoButton_Click(object sender, EventArgs e)
+        {
+            string bgVideo = backgroundVideoBox.Text;
+            string bgAudio = backgroundMusicBox.Text;
+            string outVideo = videoOutputBox.Text;
+            string vidPreset = speedBox.SelectedItem.ToString().ToLower();
+            int resW = (int)resolutionXBox.Value;
+            int resH = (int)resolutionYBox.Value;
+            int bitrate = (int)bitrateBox.Value;
+            
+            if (!File.Exists(bgVideo) || Path.GetExtension(bgVideo) != ".mp4")
+            {
+                bgVideo = "default_bg.mp4";
+            }
+
+            if (!File.Exists(bgAudio) || Path.GetExtension(bgAudio) != ".mp3")
+            {
+                bgAudio = "default_bg.mp3";
+            }
+
+            bool outputValid = false;
+            try
+            {
+                if (Directory.Exists(Path.GetDirectoryName(Path.GetFullPath(outVideo))) && Path.GetExtension(outVideo) == ".mp4")
+                {
+                    outputValid = true;
+                }
+            } catch { Program.form.LogException("a"); }
+
+            //Program.form.Log(outputValid + " | " + Path.GetFullPath(outVideo) + " | " + Path.GetExtension(outVideo));
+
+            if ((!File.Exists(bgVideo)) || (!File.Exists(bgAudio)) || !outputValid)
+            {
+                Program.form.LogException($"Invalid generation settings!\r\nRelevant generation settings listed below:\r\n\r\nBG Video: {bgVideo}\r\nBG Music: {bgAudio}\r\nOutput Video: {outVideo}\r\n\r\nNote that background video must be an .mp4 file, background music must be a .mp3 file, and output video must be in a folder that exists and be an .mp4 file.");
+                return;
+            }
+
+            targetBarValue = 1f;
+            float barMulti = 1f;
+            if (selectedPost == null)
+            {
+                await SelectNewPost(false, 0.1f);
+                barMulti = 0.9f;
+            }
+            if (selectedPost == null)
+            {
+                Program.form.Log($"Generation stopped due to the selected post being null.");
+                return;
+            }
+
+            string voice = ttsVoiceBox.SelectedItem.ToString();
+            int rate = (int)ttsSpeedBox.Value;
+
+            await Task.Run(() =>
+            {
+                try
+                {
+                    VideoTools.CleanupTempFolders();
+                    ImageTools.GeneratePostImages(selectedPost, barMulti*0.05f, Program.form.targetBarValue);
+                    TTSTools.SpeakPost(selectedPost, voice, rate, barMulti*0.1f, Program.form.targetBarValue);
+                    VideoTools.GenerateVideo(bgVideo, bgAudio, outVideo, vidPreset, resW, resH, bitrate);
+                    VideoTools.CleanupTempFolders();
+                }
+                catch (Exception ex)
+                {
+                    Program.form.LogException(ex);
+                }
+            });
         }
     }
 }

@@ -26,16 +26,16 @@ namespace RedditVideoGenerator
         private void button1_Click(object sender, EventArgs e)
         {
             VideoTools.CleanupTempFolders();
-            post = RedditTools.GetPost("tf2", FromTime.Week, 3, 30);
+            post = RedditTools.GetPost("art", FromTime.Week, 7, 30);
             ImageTools.GeneratePostImages(post);
-            TTSTools.SpeakPost(post);
-            VideoTools.GenerateVideo();
+            TTSTools.SpeakPost(post, "Microsoft Anna", 2);
+            VideoTools.GenerateVideo("default_bg.mp4");
             VideoTools.CleanupTempFolders();
             //pictureBox1.Image = ImageTools.PostImage(post);
             //pictureBox1.Image = ImageTools.PostImage("This is a test reddit post! :DD", "Test af!\n\nedit: hi", "tester123", "1.2k");
 
             //VideoTools.RunFfmpeg($"-framerate 1 -start_number 0 -y -i {Path.Combine(VideoTools.imgFolderPath, "%d.png")} -vf scale=1280:720 -pix_fmt yuv420p Project.mp4 ");
-            //VideoTools.RunFfmpeg($"-y -i space.mp4 -vf \"scale=854:480\" space.gif");
+            //VideoTools.RunFfmpeg($"-y -i space.mp4 -vf \"scale=854:480\" default_bg.mp4");
             //VideoTools.RunFfmpeg($"-i space.gif {Path.Combine(VideoTools.tempFolderName, "background.gif")}");
 
 
@@ -48,11 +48,12 @@ namespace RedditVideoGenerator
             {
                 duration += s;
             }
+            */
             //VideoTools.RunFfmpeg($"-y -i space.mp4 -filter_complex \"scale=854:480, loop=-1:32767:0\" -t {duration} -b:v 600k -pix_fmt yuv420p loopedbg.mp4");
 
 
 
-
+            /*
             //int duration = 0;
             //foreach (var s in seconds)
             //{

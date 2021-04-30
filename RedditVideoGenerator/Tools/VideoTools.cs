@@ -18,6 +18,7 @@ namespace RedditVideoGenerator.Tools
 
         public static void SetupTempFolders()
         {
+            Program.form.Log("Verifying temporary folders...");
             Directory.CreateDirectory(imgFolderPath);
             Directory.CreateDirectory(ttsFolderPath);
             Directory.CreateDirectory(vidFolderPath);
@@ -25,6 +26,7 @@ namespace RedditVideoGenerator.Tools
 
         public static void CleanupTempFolders()
         {
+            Program.form.Log("Cleaning up temporary folders...");
             if (Directory.Exists(tempFolderName)) Directory.Delete(tempFolderName, true);
         }
 
@@ -63,7 +65,7 @@ namespace RedditVideoGenerator.Tools
             }
         }
 
-        public static void GenerateVideo(string backgroundVideoPath = "space.mp4", string outputVideoPath = "finishedvideo.mp4", string quality = "ultrafast")
+        public static void GenerateVideo(string backgroundVideoPath = "space.mp4", string backgroundAudioPath = "default_bg.mp3", string outputVideoPath = "finishedvideo.mp4", string quality = "ultrafast", int resW = 854, int resH = 480, int bitrate = 700)
         {
             var seconds = File.ReadAllText(Path.Combine(VideoTools.tempFolderName, "ttsLengths.txt")).Split(',').Select(s => int.Parse(s)).ToList();
 
@@ -73,13 +75,13 @@ namespace RedditVideoGenerator.Tools
                 duration += s;
             }
 
-            VideoTools.RunFfmpeg($"-y -i {backgroundVideoPath} -filter_complex \"scale=854:480, loop=-1:32767:0\" -t {duration} -b:v 600k -pix_fmt yuv420p -preset {quality} {Path.Combine(VideoTools.tempFolderName, "bg.mp4")}");
+            VideoTools.RunFfmpeg($"-y -i {backgroundVideoPath} -filter_complex \"scale={resW}:{resH}, loop=-1:32767:0\" -t {duration} -b:v {bitrate}k -pix_fmt yuv420p -preset {quality} {Path.Combine(VideoTools.tempFolderName, "bg.mp4")}");
 
             int position = 0;
             for (int i = 0; i < seconds.Count(); i++)
             {
                 VideoTools.RunFfmpeg($"-y -i {(i == 0 ? Path.Combine(VideoTools.tempFolderName, "bg.mp4") : Path.Combine(VideoTools.vidFolderPath, (i - 1) + ".mp4"))} -i {Path.Combine(VideoTools.imgFolderPath, i + ".png")}" +
-                    $" -filter_complex \"[1:v]scale=854:480:force_original_aspect_ratio=decrease, [0:v]overlay = W/2-w/2:H/2-h/2:enable = 'between(t,{position},{position + seconds[i]})'\"" +
+                    $" -filter_complex \"[1:v]scale={resW}:{resH}:force_original_aspect_ratio=decrease, [0:v]overlay = W/2-w/2:H/2-h/2:enable = 'between(t,{position},{position + seconds[i]})'\"" +
                     $" -pix_fmt yuv420p" +
                     $" -preset {quality} -async 1 {Path.Combine(VideoTools.vidFolderPath, i + ".mp4")}");
 
@@ -101,11 +103,13 @@ namespace RedditVideoGenerator.Tools
             }
 
             string inputs = "";
-            for (int i = 0; i < seconds.Count; i++)
+            for (int i = seconds.Count - 1; i >= 0; i--)
             {
                 inputs += $"-i {Path.Combine(VideoTools.vidFolderPath, i + ".wav")} ";
             }
-            VideoTools.RunFfmpeg($"-y " + inputs + $"-filter_complex amix=inputs={seconds.Count}:duration=longest,volume={seconds.Count},dynaudnorm {Path.Combine(VideoTools.vidFolderPath, "finish.wav")}");
+            inputs += $"-i {backgroundAudioPath} ";
+            Program.form.Log(inputs);
+            VideoTools.RunFfmpeg($"-y " + inputs + $"-filter_complex amix=inputs={seconds.Count+1}:duration=first,volume={seconds.Count},dynaudnorm {Path.Combine(VideoTools.vidFolderPath, "finish.wav")}");
 
             for (int i=0;i<seconds.Count;i++)
             {
